@@ -176,6 +176,15 @@ func runSubcommand(args []string) {
 			cliutil.Exit(1)
 		}
 		cliutil.Exit(0)
+	case "folders", "list", "read", "search":
+		runMailCLI(args[1], args[2:])
+	case "archive", "delete", "mark-read", "mark-unread", "move":
+		// RunManage expects the subcommand as the first argument.
+		if err := matchaCli.RunManage(args[1:]); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			cliutil.Exit(1)
+		}
+		cliutil.Exit(0)
 	case "marketplace":
 		mp := tui.NewMarketplace(true)
 		p := tea.NewProgram(mp)
@@ -185,6 +194,20 @@ func runSubcommand(args []string) {
 		}
 		cliutil.Exit(0)
 	}
+}
+
+func runMailCLI(cmd string, args []string) {
+	run := map[string]func([]string) error{
+		"folders": matchaCli.RunFolders,
+		"list":    matchaCli.RunList,
+		"read":    matchaCli.RunRead,
+		"search":  matchaCli.RunSearch,
+	}[cmd]
+	if err := run(args); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		cliutil.Exit(1)
+	}
+	cliutil.Exit(0)
 }
 
 func handleContactsSubcommand(args []string) {
@@ -350,6 +373,15 @@ Usage:
 
 Commands:
   send             Send an email from the command line
+  folders          List the folders of an account
+  list             List the messages in a folder
+  read             Print one message
+  search           Search a folder
+  archive          Archive messages
+  delete           Delete messages
+  mark-read        Mark messages as read
+  mark-unread      Mark messages as unread
+  move             Move messages to another folder
   apply            Apply a patch from a git-format-patch email
   send-patch       Send a git-format-patch email
   contacts         Manage contacts (export, sync)
