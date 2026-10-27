@@ -182,6 +182,12 @@ func runSubcommand(args []string) {
 			cliutil.Exit(1)
 		}
 		cliutil.Exit(0)
+	case "list":
+		if err := matchaCli.RunList(args[2:]); err != nil {
+			fmt.Fprintf(os.Stderr, "list failed: %v\n", err)
+			cliutil.Exit(1)
+		}
+		cliutil.Exit(0)
 	case "marketplace":
 		mp := tui.NewMarketplace(true)
 		p := tea.NewProgram(mp)
@@ -357,6 +363,7 @@ Usage:
 Commands:
   send             Send an email from the command line
   folders          List the folders of an account
+  list             List the messages in a folder
   apply            Apply a patch from a git-format-patch email
   send-patch       Send a git-format-patch email
   contacts         Manage contacts (export, sync)
