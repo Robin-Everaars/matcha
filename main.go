@@ -200,6 +200,13 @@ func runSubcommand(args []string) {
 			cliutil.Exit(1)
 		}
 		cliutil.Exit(0)
+	case "archive", "delete", "mark-read", "mark-unread", "move":
+		// RunManage takes the subcommand name as its first argument.
+		if err := matchaCli.RunManage(args[1:]); err != nil {
+			fmt.Fprintf(os.Stderr, "%s failed: %v\n", args[1], err)
+			cliutil.Exit(1)
+		}
+		cliutil.Exit(0)
 	case "marketplace":
 		mp := tui.NewMarketplace(true)
 		p := tea.NewProgram(mp)
@@ -378,6 +385,11 @@ Commands:
   list             List the messages in a folder
   read             Print one message
   search           Search a folder
+  archive          Archive messages
+  delete           Delete messages
+  mark-read        Mark messages as read
+  mark-unread      Mark messages as unread
+  move             Move messages to another folder
   apply            Apply a patch from a git-format-patch email
   send-patch       Send a git-format-patch email
   contacts         Manage contacts (export, sync)
