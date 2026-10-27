@@ -194,6 +194,12 @@ func runSubcommand(args []string) {
 			cliutil.Exit(1)
 		}
 		cliutil.Exit(0)
+	case "search":
+		if err := matchaCli.RunSearch(args[2:]); err != nil {
+			fmt.Fprintf(os.Stderr, "search failed: %v\n", err)
+			cliutil.Exit(1)
+		}
+		cliutil.Exit(0)
 	case "marketplace":
 		mp := tui.NewMarketplace(true)
 		p := tea.NewProgram(mp)
@@ -371,6 +377,7 @@ Commands:
   folders          List the folders of an account
   list             List the messages in a folder
   read             Print one message
+  search           Search a folder
   apply            Apply a patch from a git-format-patch email
   send-patch       Send a git-format-patch email
   contacts         Manage contacts (export, sync)
